@@ -1,93 +1,65 @@
-import { trigger, transition, query, style, stagger, animate, animateChild } from '@angular/animations';
-
-import { Component, ViewChild, ElementRef } from '@angular/core';
-import { FormBuilder, Validators, FormControl } from '@angular/forms';
+import { Component, HostBinding} from '@angular/core';
+import { Router } from '@angular/router';
 
 
 
 @Component({
-  selector: 'app-root',
+  selector: "app-root",
   template: `
-    <nav>
-      <h1>NETFLIX</h1>
-    </nav>
-    <form [formGroup]="formData" (ngSubmit)="onSubmit()">
-      <form-inputs @input *ngIf="showInputs">
-        <h3 @header>REGISTRATION</h3>
-        <app-form-input [focus]="true" label="NAME" formControlName="name">
-        </app-form-input>
-        <app-form-input label="SURNAME" formControlName="surname">
-        </app-form-input>
-        <app-form-input label="EMAIL" formControlName="email"> </app-form-input>
-        <app-form-input label="COUNTRY" formControlName="country">
-        </app-form-input>
-      </form-inputs>
-      <button type="submit" (click)="showInput()" [class.move]="showInputs">
-        {{ !showInputs ? 'REGISTER' : 'SUBMIT' }}
-      </button>
-    </form>
+    <nav *ngIf="router.url === '/register'"></nav>
+    <app-logo [class.moveUp]="router.url === '/register'"></app-logo>
+    <router-outlet></router-outlet>
   `,
-  styleUrls: ['./app.component.scss'],
-  animations: [
-    trigger('input', [
-      transition(':enter', [
-        query(
-          'app-form-input',
-          [
-            style({
-              opacity: 0,
-            }),
-            stagger(
-              '50ms',
-              animate(
-                '500ms 200ms ease',
-                style({
-                  opacity: 1,
-                })
-              )
-            ),
-          ],
-          { optional: true }
-        ),
-        query('@header', animateChild()),
-      ]),
-    ]),
+  styles: [
+    `
+      :host {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-image: url("../assets/wave.svg");
+        background-position: 0% 0%;
+        background-size: cover;
+        animation: move 10000ms infinite alternate;
+        position: relative;
+        &.black {
+          background: black;
+        }
+      }
 
-    trigger('header', [
-      transition(':enter', [
-        style({
-          opacity: 0,
-          transform: 'translateY(40%)',
-        }),
-        animate('300ms ease'),
-      ]),
-    ]),
+      app-logo.moveUp {
+        top: 40px;
+      }
+
+      @keyframes move {
+        to {
+          background-position: 50% 0%;
+        }
+      }
+      nav {
+        position: relative;
+        top: -70px;
+        width: 90%;
+        height: 8%;
+        border-radius: 40px;
+        background: rgba(21, 26, 31, 5);
+        box-shadow: 1px 1px 10px 0px rgba(0, 0, 0, 0.4);
+      }
+    `,
   ],
 })
 export class AppComponent {
-  constructor(private formBuilder: FormBuilder) {}
-
-  @ViewChild('firstInput', { static: true })
-  input!: ElementRef<HTMLInputElement>;
-
-  formData = this.formBuilder.group(
-    {
-      name: ['', Validators.required],
-      surname: ['', Validators.required],
-      email: ['', Validators.required],
-      country: ['', Validators.required],
-    },
-    { updateOn: 'change' }
-  );
-
-  showInputs = false;
-
-  showInput(): void {
-    this.showInputs = true;
+  @HostBinding("class.black")
+  get black(): boolean {
+    return this.router.url === "/" ? true : false;
   }
+  constructor(public router: Router) {}
 
-  onSubmit(): void {
-    if (this.formData.invalid) return;
-    console.log(this.formData.value);
+  ngOnInit() {
+    setTimeout(() => {
+      this.router.navigate(["/register"]);
+    }, 2000);
   }
 }

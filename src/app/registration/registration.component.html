@@ -1,0 +1,15 @@
+<form [formGroup]="formData" (ngSubmit)="onSubmit()" @form>
+  <form-inputs @input *ngIf="showInputs">
+      <h3 @header>REGISTRATION</h3>
+      <app-form-input [focus]="true" label="NAME" formControlName="name">
+      </app-form-input>
+      <app-form-input label="SURNAME" formControlName="surname">
+      </app-form-input>
+      <app-form-input label="EMAIL" formControlName="email"> </app-form-input>
+      <app-form-input label="COUNTRY" formControlName="country">
+      </app-form-input>
+  </form-inputs>
+  <button type="submit" (click)="showInput()" [class.move]="showInputs" @button>
+    {{ !showInputs ? 'REGISTER' : 'SUBMIT' }}
+  </button>
+</form>
